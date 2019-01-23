@@ -1,7 +1,9 @@
 package android.coolweather.com.coolweather.util;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.coolweather.com.coolweather.R;
+import android.coolweather.com.coolweather.WeatherActivity;
 import android.coolweather.com.coolweather.db.City;
 import android.coolweather.com.coolweather.db.Country;
 import android.coolweather.com.coolweather.db.Province;
@@ -79,6 +81,12 @@ public class ChooseAreaFragment extends Fragment {
                 }else if (currentLevel == LEVEL_CITY){
                     selectedCity =cityList.get(position);
                     queryCounties();
+                }else if (currentLevel == LEVEL_COUNTY){
+                    String weatherId = countryList.get(position).getWeatherId();
+                    Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                    intent.putExtra("weather_id",weatherId);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
             }
         });
@@ -114,7 +122,7 @@ public class ChooseAreaFragment extends Fragment {
     private void queryCities(){
         titleView.setText(selectedProvince.getProvinceName());
         backButton.setVisibility(View.VISIBLE);
-        cityList = DataSupport.where("provinceid = ?",String.valueOf(selectedProvince.getId())).find(City.class);//查找表中provinceId的一列数据
+        cityList = DataSupport.where("provinceId = ?",String.valueOf(selectedProvince.getId())).find(City.class);//查找表中provinceId的一列数据
         if (cityList.size()>0){
             dataList.clear();
             for (City city:cityList){
@@ -132,7 +140,7 @@ public class ChooseAreaFragment extends Fragment {
     private void queryCounties(){
         titleView.setText(selectedCity.getCityName());
         backButton.setVisibility(View.VISIBLE);
-        countryList = DataSupport.where("cityid = ?",String.valueOf(selectedCity.getId())).find(Country.class);
+        countryList = DataSupport.where("cityId = ?",String.valueOf(selectedCity.getId())).find(Country.class);
         if (countryList.size()>0){
             dataList.clear();
             for (Country country:countryList){
